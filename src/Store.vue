@@ -1,6 +1,6 @@
 <script>/* eslint-disable*/
 
-import { Vuex } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
   name: "Store",

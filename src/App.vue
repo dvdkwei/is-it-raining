@@ -1,15 +1,13 @@
 <script setup>
 /* eslint-disable */
 
-import {reactive, vuex} from "vue";
+import { reactive } from "vue";
 import Current from "./components/Current.vue";
 
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
 
 let currentWeatherData = reactive({});
-
-
 
 navigator.geolocation.getCurrentPosition(
     (pos) => {
@@ -54,7 +52,7 @@ navigator.geolocation.getCurrentPosition(
 @import "./assets/base.css";
 
 #app {
-  display: block;
+  display: grid;
   height: 100%;
   width: 100%;
   justify-items: center;
@@ -84,10 +82,12 @@ header {
 
 footer {
   height: 10vh;
+  width: 90%;
   margin-top: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px white solid;
+  border-radius: 10px;
 }
 </style>

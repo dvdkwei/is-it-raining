@@ -1,6 +1,6 @@
 <script setup>/* eslint-disable */
 
-import {ref} from "vue";
+import { ref } from "vue";
 import Temperature from "./Temperature.vue";
 
 const props = defineProps({
@@ -13,13 +13,14 @@ const state = ref({
 });
 
 const toggleTemperature = () => {
-  if(state.value.tempDegree === 'c') {
+  if (state.value.tempDegree === 'c') {
     state.value.tempValue = props.data.current.temp_f;
     state.value.tempDegree = 'f';
-  } else {
-    state.value.tempValue = props.data.current.temp_c;
-    state.value.tempDegree = 'c';
+    console.log(state.value.tempValue)
+    return;
   }
+  state.value.tempValue = props.data.current.temp_c;
+  state.value.tempDegree = 'c';
 
   console.log(state.value.tempValue)
 }
@@ -33,16 +34,11 @@ const toggleTemperature = () => {
       <h2>{{ props.data.location.region }}</h2>
       <h3>{{ props.data.location.country }}</h3>
     </div>
-    <Temperature
-        :val="state.tempValue"
-        :degree="state.tempDegree"
-        @click="toggleTemperature"
-    />
+    <Temperature :val="state.tempValue" :degree="state.tempDegree" @click="toggleTemperature" />
   </div>
 </template>
 
 <style scoped>
-
 .current {
   height: 60vh;
   width: 90%;
@@ -53,7 +49,7 @@ const toggleTemperature = () => {
 
   background-color: rgba(255, 255, 255, .15);
 
-  border-radius: 10px;
+  border-radius: 20px;
 }
 
 .location-text {
@@ -70,7 +66,8 @@ const toggleTemperature = () => {
   border-radius: 10px;
 }
 
-.location-text h2, h3 {
+.location-text h2,
+h3 {
   margin: 0;
 }
 
@@ -82,5 +79,4 @@ const toggleTemperature = () => {
 .location-container img {
   width: 40px;
 }
-
 </style>
