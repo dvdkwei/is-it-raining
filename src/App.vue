@@ -23,7 +23,7 @@ navigator.geolocation.getCurrentPosition(
         )
             .then((data) => data.json())
             .then((obj) => {
-              currentWeatherData.value = obj;
+              currentWeatherData = obj;
             })
             .catch(console.log);
       }
@@ -34,7 +34,7 @@ navigator.geolocation.getCurrentPosition(
 
 <template>
   <header>
-    <p>Is It Raining?</p>
+    <h2>Is It Raining?</h2>
   </header>
   <div class="main-container">
     <Current
@@ -53,8 +53,7 @@ navigator.geolocation.getCurrentPosition(
 
 #app {
   display: grid;
-  height: 100%;
-  width: 100%;
+  max-width: 100vw;
   justify-items: center;
   border-radius: 10px;
 }
@@ -67,7 +66,7 @@ header {
   justify-content: center;
 
   font-size: xx-large;
-  font-weight: bolder;
+  font-weight: 900;
 }
 
 .main-container {
@@ -82,12 +81,18 @@ header {
 
 footer {
   height: 10vh;
-  width: 90%;
+  width: 80%;
   margin-top: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px white solid;
   border-radius: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  footer{
+    width: 90%;
+  }
 }
 </style>

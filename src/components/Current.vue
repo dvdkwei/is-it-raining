@@ -1,7 +1,6 @@
 <script setup>/* eslint-disable */
 
 import { ref } from "vue";
-import Temperature from "./Temperature.vue";
 
 const props = defineProps({
   data: Object,
@@ -9,20 +8,19 @@ const props = defineProps({
 
 const state = ref({
   tempValue: props.data.current.temp_c,
-  tempDegree: 'c'
+  tempDegree: 'c', 
+  weatherText: props.data.current.condition.text, 
+  weatherIcon: 'http:' + props.data.current.condition.icon
 });
 
 const toggleTemperature = () => {
   if (state.value.tempDegree === 'c') {
     state.value.tempValue = props.data.current.temp_f;
     state.value.tempDegree = 'f';
-    console.log(state.value.tempValue)
     return;
   }
   state.value.tempValue = props.data.current.temp_c;
   state.value.tempDegree = 'c';
-
-  console.log(state.value.tempValue)
 }
 
 
@@ -34,34 +32,41 @@ const toggleTemperature = () => {
       <h2>{{ props.data.location.region }}</h2>
       <h3>{{ props.data.location.country }}</h3>
     </div>
-    <Temperature :val="state.tempValue" :degree="state.tempDegree" @click="toggleTemperature" />
+    <div class="temperature" @click="toggleTemperature">
+      <p class="value">{{ state.tempValue }}</p>
+      <p class="degree">{{ ' °' + state.tempDegree }}</p>
+    </div>
+    <div class="weather">
+      <p class="wdesc">{{ state.weatherText }}</p>
+      <img class="wicon" :src=state.weatherIcon alt="icon"/>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .current {
   height: 60vh;
-  width: 90%;
+  width: 60vw;
 
   display: grid;
+  gap: 5rem;
+  grid-template-rows: .3fr .6fr .3fr;
   justify-items: center;
-  padding: 10px;
+  align-items: top;
+  padding: 7px;
 
-  background-color: rgba(255, 255, 255, .15);
+  background-color: rgba(27, 27, 27, 0.9);
 
   border-radius: 20px;
 }
 
 .location-text {
-  border: 1px solid white;
-
-  height: fit-content;
-  width: 90%;
+  height: 100%;
+  width: 100%;
 
   display: grid;
 
   justify-items: center;
-  padding: 10px;
 
   border-radius: 10px;
 }
@@ -73,10 +78,49 @@ h3 {
 
 .location-text h2 {
   font-weight: bolder;
-  font-size: x-large;
+  font-size: xx-large;
 }
 
 .location-container img {
   width: 40px;
+}
+
+.temperature {
+  display: inline-flex;
+  justify-items: center;
+  align-content: center;
+  height: 150px;
+}
+
+.temperature:hover{
+  cursor: pointer;
+}
+
+.value {
+  font-size: 8em;
+  margin: 0;
+}
+
+.degree {
+  font-size: 3rem;
+  margin: 0;
+  align-self: end;
+}
+
+.weather{
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.weather .wdesc {
+  font-size: x-large;
+}
+
+@media screen and (max-width: 600px) {
+  .current{
+    width: 90vw;
+  }
 }
 </style>
