@@ -1,51 +1,56 @@
 <script setup>
 /* eslint-disable */
 
-import { reactive } from "vue";
+import { onMounted, ref } from "vue";
 import Current from "./components/Current.vue";
 
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
 
-let currentWeatherData = reactive({});
+const currentWeatherState = ref();
+const lastUpdate = ref();
 
-navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      let currentLatitude = pos.coords.latitude;
-      let currentLongitude = pos.coords.longitude;
+const fetchCurrentWeatherData = (lat, long) => {
+  fetch(BASE_URL + `/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
+    .then((data) => data.json())
+    .then((obj) => {
+      currentWeatherState.value = obj;
+      lastUpdate.value = obj.current.last_updated;
+    })
+    .catch(console.log);
+}
 
-      if (currentLatitude && currentLongitude) {
-        fetch(
-            BASE_URL +
-            `/current.json?key=${API_KEY}&q=${
-                currentLatitude + "," + currentLongitude
-            }&aqi=no`
-        )
-            .then((data) => data.json())
-            .then((obj) => {
-              currentWeatherData = obj;
-            })
-            .catch(console.log);
-      }
-    },
+const getCurrentWeather = () => {
+  navigator.geolocation.getCurrentPosition(
+    (pos) => { fetchCurrentWeatherData(pos.coords.latitude, pos.coords.longitude) },
     () => console.log
-);
+  );
+}
+
+const refreshCurrentWeather = () => {
+  currentWeatherState.value = undefined;
+  getCurrentWeather();
+}
+
+onMounted(() => getCurrentWeather());
+
 </script>
 
 <template>
   <header>
-    <h2>Is It Raining?</h2>
+    <h3>weather</h3>
   </header>
   <div class="main-container">
-    <Current
-        class="current"
-        v-if = currentWeatherData.value
-        :data="currentWeatherData.value"
-    />
+    <Current v-if='currentWeatherState' :data="currentWeatherState" />
+    <h3 v-else>Loading ...</h3>
   </div>
-  <footer>
-    footer
+  <footer @click="refreshCurrentWeather">
+    <h3>refresh</h3>&nbsp;&nbsp;
+    <img id="refresh" alt="refresh" src="./assets/icons8-refresh-64.png" />
   </footer>
+  <p id='last-update' v-if="lastUpdate">
+    last updated: {{ lastUpdate }}
+  </p>
 </template>
 
 <style>
@@ -59,7 +64,7 @@ navigator.geolocation.getCurrentPosition(
 }
 
 header {
-  height: 20vh;
+  height: 15vh;
 
   display: flex;
   align-items: center;
@@ -70,7 +75,7 @@ header {
 }
 
 .main-container {
-  height: 60vh;
+  height: 65vh;
   width: 100%;
   margin: 10px 0;
 
@@ -80,18 +85,32 @@ header {
 }
 
 footer {
-  height: 10vh;
-  width: 80%;
-  margin-top: 40px;
+  height: 5vh;
+  width: 90%;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
+
   border: 1px white solid;
   border-radius: 10px;
 }
 
+footer h2 {
+  font-weight: bolder;
+}
+
+footer #refresh {
+  width: 1.1rem;
+  filter: invert(100%);
+}
+
+#last-update {
+  font-size: 12px;
+}
+
 @media screen and (max-width: 600px) {
-  footer{
+  footer {
     width: 90%;
   }
 }

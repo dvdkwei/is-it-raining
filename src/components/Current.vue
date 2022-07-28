@@ -29,8 +29,8 @@ const toggleTemperature = () => {
 <template>
   <div class="current">
     <div class="location-text">
-      <h2>{{ props.data.location.region }}</h2>
-      <h3>{{ props.data.location.country }}</h3>
+      <img id='location-icon' src="../assets/icons8-location-48.png" alt="location"/>
+      <h3>{{ props.data.location.region + ', ' +props.data.location.country }}</h3>
     </div>
     <div class="temperature" @click="toggleTemperature">
       <p class="value">{{ state.tempValue }}</p>
@@ -49,8 +49,8 @@ const toggleTemperature = () => {
   width: 60vw;
 
   display: grid;
-  gap: 5rem;
-  grid-template-rows: .3fr .6fr .3fr;
+  gap: 4rem;
+  grid-template-rows: .3fr 1fr .2fr;
   justify-items: center;
   align-items: top;
   padding: 7px;
@@ -64,21 +64,26 @@ const toggleTemperature = () => {
   height: 100%;
   width: 100%;
 
-  display: grid;
-
-  justify-items: center;
+  display: inline-flex;
+  column-gap: 2em;
+  justify-content: center;
+  align-items: center;
 
   border-radius: 10px;
 }
 
-.location-text h2,
-h3 {
+.location-text h3 {
   margin: 0;
 }
 
-.location-text h2 {
+.location-text h3 {
   font-weight: bolder;
-  font-size: xx-large;
+  font-size: x-large;
+}
+
+.location-text #location-icon {
+  width: 1.7rem;
+  filter: invert(100%);
 }
 
 .location-container img {
@@ -88,8 +93,8 @@ h3 {
 .temperature {
   display: inline-flex;
   justify-items: center;
-  align-content: center;
-  height: 150px;
+  align-items: center;
+  height: 100%;
 }
 
 .temperature:hover{
@@ -104,7 +109,8 @@ h3 {
 .degree {
   font-size: 3rem;
   margin: 0;
-  align-self: end;
+  margin-top: 40px;
+  /* align-self: start; */
 }
 
 .weather{
