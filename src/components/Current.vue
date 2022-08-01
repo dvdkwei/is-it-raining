@@ -55,9 +55,21 @@ const toggleTemperature = () => {
   align-items: top;
   padding: 7px;
 
+  animation: fade-in 1.5s;
+
+
   background-color: rgba(27, 27, 27, 0.9);
 
   border-radius: 20px;
+}
+
+@keyframes fade-in{
+  from{
+    opacity: 10%;
+  }
+  to{
+    opacity: 100%;
+  }
 }
 
 .location-text {

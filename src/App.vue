@@ -7,15 +7,18 @@ import Current from "./components/Current.vue";
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
 
+const permissionState = ref();
 const currentWeatherState = ref();
-const lastUpdate = ref();
+const lastUpdateState = ref();
+
+if(!('geolocation' in navigator)) alert('no navigator');
 
 const fetchCurrentWeatherData = (lat, long) => {
   fetch(BASE_URL + `/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
     .then((data) => data.json())
     .then((obj) => {
       currentWeatherState.value = obj;
-      lastUpdate.value = obj.current.last_updated;
+      lastUpdateState.value = obj.current.last_updated;
     })
     .catch(console.log);
 }
@@ -32,7 +35,21 @@ const refreshCurrentWeather = () => {
   getCurrentWeather();
 }
 
-onMounted(() => getCurrentWeather());
+const enableLocationPermission = () => {
+  permissionState.value = true;
+  refreshCurrentWeather();
+}
+
+onMounted(() => {
+  navigator.permissions.query({name:'geolocation'}).then((result) => {
+    if(result.state === 'denied'){
+      permissionState.value = false;
+      return;
+    }
+    permissionState.value = true;
+    getCurrentWeather();
+  });
+});
 
 </script>
 
@@ -41,15 +58,22 @@ onMounted(() => getCurrentWeather());
     <h3>weather</h3>
   </header>
   <div class="main-container">
-    <Current v-if='currentWeatherState' :data="currentWeatherState" />
-    <h3 v-else>Loading ...</h3>
+    <Current v-if='permissionState && currentWeatherState' :data="currentWeatherState" />
+    <h3 v-else-if="permissionState && !currentWeatherState">Loading ...</h3>
+    <button 
+      id='enable-location-button' 
+      v-else
+      @click="enableLocationPermission"
+    >
+      Please enable location
+    </button>
   </div>
   <footer @click="refreshCurrentWeather">
     <h3>refresh</h3>&nbsp;&nbsp;
     <img id="refresh" alt="refresh" src="./assets/icons8-refresh-64.png" />
   </footer>
-  <p id='last-update' v-if="lastUpdate">
-    last updated: {{ lastUpdate }}
+  <p id='last-update' v-if="lastUpdateState">
+    last updated: {{ lastUpdateState }}
   </p>
 </template>
 
