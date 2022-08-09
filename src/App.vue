@@ -84,6 +84,7 @@ onMounted(() => {
 #app {
   display: grid;
   max-width: 100vw;
+  height: 100%;
   justify-items: center;
   align-content: center;
   border-radius: 10px;
@@ -124,18 +125,23 @@ header {
 }
 
 .sticky-container #refresh-button {
-  width: 100%;
+  width: 400px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  font-size: large;
+  font-size: larger;
+  font-weight: bold;
 
   color: aliceblue;
   background: none;
-  border: 1px solid white;
+  border: 1px solid rgba(255, 255, 255, .5);
   border-radius: 10px;
   /* width: 1.1rem; */
+}
+
+.sticky-container #refresh-button:hover {
+  background-color: rgba(0, 0, 0, .6);
 }
 
 .sticky-container #refresh {
@@ -152,7 +158,7 @@ header {
 }
 
 @media screen and (max-width: 600px) {
-  footer {
+  .sticky-container #refresh-button{
     width: 90%;
   }
 }

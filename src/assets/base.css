@@ -4,11 +4,16 @@
 
 }
 
-body {
-  background: linear-gradient(rgba(69, 69, 69, 0.8), rgba(69, 69, 69, .4)), url('./bgimage.jpg') no-repeat center;
+html {
+  min-height: 100vh;
+  background: linear-gradient(rgba(69, 69, 69, .8), rgba(69, 69, 69, .6)), url('./bgimage.jpg') no-repeat center;
   background-blend-mode: darken;
   background-size: 400% 400%;
   transition: color 0.5s, background-color 0.5s;
+}
+
+body {
+  
   color: white;
   line-height: 1.6;
   font-family: 'Montserrat', sans-serif;

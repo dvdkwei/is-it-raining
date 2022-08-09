@@ -46,14 +46,14 @@ const toggleTemperature = () => {
 <style scoped>
 .current {
   height: 60vh;
-  width: 60vw;
+  width: 400px;
 
   display: grid;
   gap: 4rem;
   grid-template-rows: .3fr 1fr .2fr;
   justify-items: center;
   align-items: top;
-  padding: 7px;
+  /* padding: 7px; */
 
   animation: fade-in 1.5s;
 
