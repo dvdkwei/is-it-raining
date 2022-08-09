@@ -2,7 +2,8 @@
 /* eslint-disable */
 
 import { onMounted, ref } from "vue";
-import Current from "./components/Current.vue";
+import Current from "./components/CurrentWeather.vue";
+import AnimationLoader from "./components/AnimationLoader.vue";
 
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
@@ -10,8 +11,6 @@ const BASE_URL = "https://api.weatherapi.com/v1";
 const permissionState = ref();
 const currentWeatherState = ref();
 const lastUpdateState = ref();
-
-if(!('geolocation' in navigator)) alert('no navigator');
 
 const fetchCurrentWeatherData = (lat, long) => {
   fetch(BASE_URL + `/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
@@ -35,20 +34,24 @@ const refreshCurrentWeather = () => {
   getCurrentWeather();
 }
 
-const enableLocationPermission = () => {
-  permissionState.value = true;
-  refreshCurrentWeather();
-}
-
-onMounted(() => {
-  navigator.permissions.query({name:'geolocation'}).then((result) => {
-    if(result.state === 'denied'){
+const queryLocationPermission = () => {
+  navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+    if (result.state === 'denied') {
       permissionState.value = false;
       return;
     }
     permissionState.value = true;
     getCurrentWeather();
   });
+}
+
+const enableLocationPermission = () => {
+  permissionState.value = true;
+  queryLocationPermission();
+}
+
+onMounted(() => {
+  queryLocationPermission();
 });
 
 </script>
@@ -59,22 +62,20 @@ onMounted(() => {
   </header>
   <div class="main-container">
     <Current v-if='permissionState && currentWeatherState' :data="currentWeatherState" />
-    <h3 v-else-if="permissionState && !currentWeatherState">Loading ...</h3>
-    <button 
-      id='enable-location-button' 
-      v-else
-      @click="enableLocationPermission"
-    >
+    <AnimationLoader v-else-if="permissionState && !currentWeatherState">Loading ...</AnimationLoader>
+    <button id='enable-location-button' v-else @click="enableLocationPermission">
       Please enable location
     </button>
   </div>
-  <footer @click="refreshCurrentWeather">
-    <h3>refresh</h3>&nbsp;&nbsp;
-    <img id="refresh" alt="refresh" src="./assets/icons8-refresh-64.png" />
-  </footer>
-  <p id='last-update' v-if="lastUpdateState">
-    last updated: {{ lastUpdateState }}
-  </p>
+  <div class="sticky-container">
+    <button id="refresh-button" @click="refreshCurrentWeather">
+      <h3>refresh</h3>&nbsp;&nbsp;
+      <img id="refresh" alt="refresh" src="./assets/icons8-refresh-64.png" />
+    </button>
+    <p id='last-update' v-if="lastUpdateState">
+      last updated: {{ lastUpdateState }} 
+    </p>
+  </div>
 </template>
 
 <style>
@@ -84,7 +85,12 @@ onMounted(() => {
   display: grid;
   max-width: 100vw;
   justify-items: center;
+  align-content: center;
   border-radius: 10px;
+}
+
+#app * {
+  font-family: 'Montserrat', sans-serif;
 }
 
 header {
@@ -108,25 +114,37 @@ header {
   justify-content: center;
 }
 
-footer {
-  height: 5vh;
+.sticky-container {
+  height: 10vh;
   width: 90%;
   margin-top: 20px;
-  display: flex;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+}
+
+.sticky-container #refresh-button {
+  width: 100%;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border: 1px white solid;
+  font-size: large;
+
+  color: aliceblue;
+  background: none;
+  border: 1px solid white;
   border-radius: 10px;
+  /* width: 1.1rem; */
 }
 
-footer h2 {
-  font-weight: bolder;
-}
-
-footer #refresh {
-  width: 1.1rem;
+.sticky-container #refresh {
+  width: 1.2rem;
   filter: invert(100%);
+}
+
+.sticky-container h3{
+  margin: 7px 10px;
 }
 
 #last-update {
