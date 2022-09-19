@@ -44,7 +44,6 @@ const toggleTemperature = () => {
 
 <style scoped>
 .current {
-  /* height: 60vh; */
   height: 100%;
   width: 100%;
   min-width: 220px;
