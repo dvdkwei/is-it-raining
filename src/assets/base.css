@@ -5,10 +5,10 @@
 }
 
 html {
-  min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(rgba(69, 69, 69, .8), rgba(69, 69, 69, .6)), url('./bgimage.jpg') no-repeat center;
   background-blend-mode: darken;
-  background-size: 400% 400%;
+  background-size: cover;
   transition: color 0.5s, background-color 0.5s;
 }
 

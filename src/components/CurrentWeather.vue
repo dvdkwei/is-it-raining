@@ -23,7 +23,6 @@ const toggleTemperature = () => {
   state.value.tempDegree = 'c';
 }
 
-
 </script>
 
 <template>
@@ -45,8 +44,9 @@ const toggleTemperature = () => {
 
 <style scoped>
 .current {
-  height: 60vh;
-  width: 400px;
+  /* height: 60vh; */
+  height: 100%;
+  width: 100%;
 
   display: grid;
   gap: 4rem;
@@ -77,7 +77,7 @@ const toggleTemperature = () => {
   width: 100%;
 
   display: inline-flex;
-  column-gap: 2em;
+  column-gap: 1em;
   justify-content: center;
   align-items: center;
 
@@ -90,11 +90,11 @@ const toggleTemperature = () => {
 
 .location-text h3 {
   font-weight: bolder;
-  font-size: x-large;
+  font-size: medium;
 }
 
 .location-text #location-icon {
-  width: 1.7rem;
+  width: 1.1rem;
   filter: invert(100%);
 }
 
@@ -114,31 +114,36 @@ const toggleTemperature = () => {
 }
 
 .value {
-  font-size: 8em;
+  font-size: 5em;
   margin: 0;
 }
 
 .degree {
-  font-size: 3rem;
+  font-size: 2rem;
   margin: 0;
   margin-top: 40px;
   /* align-self: start; */
 }
 
 .weather{
-  width: 100%;
+  width: 90%;
   display: inline-flex;
   justify-content: space-around;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .weather .wdesc {
-  font-size: x-large;
+  font-size: medium;
+}
+
+.weather .wicon{
+  width: 42px;
 }
 
 @media screen and (max-width: 600px) {
   .current{
-    width: 90vw;
+    width: 100%;
   }
 }
 </style>
