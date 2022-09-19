@@ -60,7 +60,7 @@ const toggleTemperature = () => {
 
   background-color: rgba(27, 27, 27, 0.9);
 
-  border-radius: 20px;
+  border-radius: 16px;
 }
 
 @keyframes fade-in{
@@ -86,11 +86,8 @@ const toggleTemperature = () => {
 
 .location-text h3 {
   margin: 0;
-}
-
-.location-text h3 {
   font-weight: bolder;
-  font-size: medium;
+  font-size: 16px;
 }
 
 .location-text #location-icon {

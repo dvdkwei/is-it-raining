@@ -4,6 +4,7 @@
 import { onMounted, ref } from "vue";
 import Current from "./components/CurrentWeather.vue";
 import AnimationLoader from "./components/AnimationLoader.vue";
+import Forecast from "./components/Forecast.vue";
 
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
@@ -11,6 +12,19 @@ const BASE_URL = "https://api.weatherapi.com/v1";
 const permissionState = ref();
 const currentWeatherState = ref();
 const lastUpdateState = ref();
+const greetingState = ref();
+
+const setGreetingState = () => {
+  const hour = new Date().getHours();
+
+  switch (Math.trunc(hour / 6)) {
+    case 0: greetingState.value = 'Sleep'; break;
+    case 1: greetingState.value = 'Morning'; break;
+    case 2: greetingState.value = 'Afternoon'; break;
+    case 3: greetingState.value = 'Evening'; break;
+    default: 'Riddance';
+  }
+}
 
 const fetchCurrentWeatherData = (lat, long) => {
   fetch(BASE_URL + `/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
@@ -52,22 +66,23 @@ const enableLocationPermission = () => {
 
 onMounted(() => {
   queryLocationPermission();
+  setGreetingState();
 });
 
 </script>
 
 <template>
   <header>
-    <h3>weather</h3>
+    <h3>Good {{ greetingState }}</h3>
   </header>
-  <div class="main-container" v-if='permissionState'>
-    <Current v-if='currentWeatherState' :data="currentWeatherState" />
-    <AnimationLoader v-else>Loading ...</AnimationLoader>
+  <div class="main-container" v-if='permissionState && currentWeatherState'>
+    <Current :data="currentWeatherState" />
     <div class="main-right">
-
+      <Forecast />
     </div>
   </div>
-  <button v-if='!permissionState' id='enable-location-button' @click="enableLocationPermission">
+  <AnimationLoader v-else-if="permissionState && !currentWeatherState">Loading ...</AnimationLoader>
+  <button v-else id='enable-location-button' @click="enableLocationPermission">
     Please enable location
   </button>
   <div class="sticky-container">
@@ -113,15 +128,20 @@ header * {
 }
 
 .main-container {
-  width: 90%;
+  width: 70%;
   height: 100%;
   margin: 10px 0;
 
   display: inline-grid;
-  grid-template-columns: .3fr 1fr;
+  grid-template-columns: .4fr 1fr;
   gap: 20px;
   justify-items: center;
   align-items: center;
+}
+
+.main-right {
+  display: flex;
+  width: 100%;
 }
 
 .sticky-container {
