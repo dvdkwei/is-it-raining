@@ -9,10 +9,11 @@ import Forecast from "./components/Forecast.vue";
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
 
+const greetingState = ref();
 const permissionState = ref();
+const coorState = ref();
 const currentWeatherState = ref();
 const lastUpdateState = ref();
-const greetingState = ref();
 
 const setGreetingState = () => {
   const hour = new Date().getHours();
@@ -27,7 +28,7 @@ const setGreetingState = () => {
 }
 
 const fetchCurrentWeatherData = (lat, long) => {
-  fetch(BASE_URL + `/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
+  fetch(`${BASE_URL}/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
     .then((data) => data.json())
     .then((obj) => {
       currentWeatherState.value = obj;
@@ -37,15 +38,15 @@ const fetchCurrentWeatherData = (lat, long) => {
 }
 
 const getCurrentWeather = () => {
+  currentWeatherState.value = undefined;
   navigator.geolocation.getCurrentPosition(
-    (pos) => { fetchCurrentWeatherData(pos.coords.latitude, pos.coords.longitude) },
+    (pos) => { 
+      coorState.value = { lat: pos.coords.latitude, long: pos.coords.longitude};
+
+      fetchCurrentWeatherData(pos.coords.latitude, pos.coords.longitude);
+    },
     () => console.log
   );
-}
-
-const refreshCurrentWeather = () => {
-  currentWeatherState.value = undefined;
-  getCurrentWeather();
 }
 
 const queryLocationPermission = () => {
@@ -78,15 +79,15 @@ onMounted(() => {
   <div class="main-container" v-if='permissionState && currentWeatherState'>
     <Current :data="currentWeatherState" />
     <div class="main-right">
-      <Forecast />
+      <Forecast v-if="coorState" :data="{ BASE_URL, API_KEY, coorState }" />
     </div>
   </div>
-  <AnimationLoader v-else-if="permissionState && !currentWeatherState">Loading ...</AnimationLoader>
+  <AnimationLoader v-else-if="permissionState && !currentWeatherState" />
   <button v-else id='enable-location-button' @click="enableLocationPermission">
     Please enable location
   </button>
   <div class="sticky-container">
-    <button id="refresh-button" @click="refreshCurrentWeather">
+    <button id="refresh-button" @click="getCurrentWeather">
       <h3>refresh</h3>&nbsp;&nbsp;
       <img id="refresh" alt="refresh" src="./assets/icons8-refresh-64.png" />
     </button>
@@ -101,7 +102,7 @@ onMounted(() => {
 
 #app {
   display: grid;
-  grid-template-rows: .3fr 500px .6fr;
+  grid-template-rows: .3fr 600px .6fr;
   gap: 20px;
 
   max-width: 100vw;
