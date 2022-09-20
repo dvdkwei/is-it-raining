@@ -4,7 +4,7 @@
 import { onMounted, ref } from "vue";
 import Current from "./components/CurrentWeather.vue";
 import AnimationLoader from "./components/AnimationLoader.vue";
-import Forecast from "./components/Forecast.vue";
+import ForecastCollection from "./components/ForecastCollection.vue";
 
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
@@ -79,7 +79,7 @@ onMounted(() => {
   <div class="main-container" v-if='permissionState && currentWeatherState'>
     <Current :data="currentWeatherState" />
     <div class="main-right">
-      <Forecast v-if="coorState" :data="{ BASE_URL, API_KEY, coorState }" />
+      <ForecastCollection v-if="coorState" :data="{ BASE_URL, API_KEY, coorState }" />
     </div>
   </div>
   <AnimationLoader v-else-if="permissionState && !currentWeatherState" />
