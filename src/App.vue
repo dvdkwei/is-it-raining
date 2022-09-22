@@ -4,7 +4,8 @@
 import { onMounted, ref } from "vue";
 import Current from "./components/CurrentWeather.vue";
 import AnimationLoader from "./components/AnimationLoader.vue";
-import ForecastCollection from "./components/ForecastCollection.vue";
+import ForecastContainer from "./containers/ForecastContainer.vue";
+import NewsContainer from "./containers/NewsContainer.vue";
 
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
@@ -79,7 +80,13 @@ onMounted(() => {
   <div class="main-container" v-if='permissionState && currentWeatherState'>
     <Current :data="currentWeatherState" />
     <div class="main-right">
-      <ForecastCollection v-if="coorState" :data="{ BASE_URL, API_KEY, coorState }" />
+      <ForecastContainer 
+        v-if="coorState" 
+        :BASE_URL="BASE_URL"
+        :API_KEY="API_KEY"
+        :coordinate="coorState"
+      />
+      <NewsContainer />
     </div>
   </div>
   <AnimationLoader v-else-if="permissionState && !currentWeatherState" />
@@ -130,11 +137,12 @@ header * {
 
 .main-container {
   width: 70%;
+  max-width:70%;
   height: 100%;
   margin: 10px 0;
 
   display: inline-grid;
-  grid-template-columns: .4fr 1fr;
+  grid-template-columns: .3fr 1fr;
   gap: 20px;
   justify-items: center;
   align-items: center;
@@ -143,6 +151,8 @@ header * {
 .main-right {
   display: flex;
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .sticky-container {
@@ -185,6 +195,15 @@ header * {
 
 #last-update {
   font-size: 12px;
+}
+
+@keyframes fade-in{
+  from{
+    opacity: 10%;
+  }
+  to{
+    opacity: 100%;
+  }
 }
 
 @media screen and (max-width: 600px) {

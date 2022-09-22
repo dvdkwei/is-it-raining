@@ -1,0 +1,57 @@
+<script setup>/* eslint-disable */
+
+import { onMounted, ref, h } from "vue";
+import Forecast from "../components/Forecast.vue";
+
+const props = defineProps({ 
+  BASE_URL: String,
+  API_KEY: String,
+  coordinate: Object
+});
+
+const forecast = ref();
+
+const fetchForecasts = () => {
+  fetch(`${props.BASE_URL}/forecast.json?key=${props.API_KEY}&q=${props.coordinate.lat + ',' + props.coordinate.long}&days=2`)
+    .then(x => x.json())
+    .then(x => forecast.value = x);
+}
+
+const getForecastArray = (arr) => {
+  let hour = new Date().getHours();
+  let today = arr.forecast.forecastday[0].hour;
+  let tomorrow = arr.forecast.forecastday[1].hour;
+
+  today = today.filter(x => {
+    let time = x.time.split(' ')[1];
+    return time.match(/[1-2][0-9]|[1-9]/ig) > hour
+  });
+  
+  return today.concat(tomorrow).slice(0, 24);
+}
+
+onMounted(() => {
+  fetchForecasts();
+})
+
+</script>
+
+<template>
+  <div v-if="forecast" class="forecasts-container flex min-w-full  h-[150px] overflow-x-scroll items-center rounded-2xl">
+    <template class="" v-for="forecastElement in getForecastArray(forecast)">
+      <Forecast 
+        :componentKey="forecastElement.time_epoch"
+        :time="forecastElement.time"
+        :icon="forecastElement.condition.icon"
+        :temperature="Math.trunc(forecastElement.temp_c)"
+      />
+    </template>
+  </div>
+</template>
+
+<style>
+.forecasts-container {
+  background-color: rgba(27, 27, 27, .9);
+  animation: fade-in 1.5s;
+}
+</style>

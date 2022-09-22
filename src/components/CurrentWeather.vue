@@ -63,15 +63,6 @@ const toggleTemperature = () => {
   border-radius: 16px;
 }
 
-@keyframes fade-in{
-  from{
-    opacity: 10%;
-  }
-  to{
-    opacity: 100%;
-  }
-}
-
 .location-text {
   height: 100%;
   width: 100%;
