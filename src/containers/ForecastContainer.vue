@@ -37,8 +37,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="forecast" class="forecasts-container flex min-w-full  h-[150px] overflow-x-scroll items-center rounded-2xl">
-    <template class="" v-for="forecastElement in getForecastArray(forecast)">
+  <div v-if="forecast" 
+    class="forecasts-container flex gap-x-2 px-2 min-w-full h-[150px] items-center rounded-2xl"
+  >
+    <template  v-for="forecastElement in getForecastArray(forecast)">
       <Forecast 
         :componentKey="forecastElement.time_epoch"
         :time="forecastElement.time"
@@ -49,9 +51,25 @@ onMounted(() => {
   </div>
 </template>
 
-<style>
+<style lang="scss">
 .forecasts-container {
   background-color: rgba(27, 27, 27, .9);
   animation: fade-in 1.5s;
+  overflow: auto;
+  &:hover{
+    & ::-webkit-scrollbar-track{
+      margin: 0 16px;
+    }
+
+    & ::-webkit-scrollbar-thumb{
+      background: rgb(27, 27, 27);
+      border-radius: 16px;
+    }
+  }
+}
+
+.forecasts-container::-webkit-scrollbar{
+  background: transparent;
+  height: 10px;
 }
 </style>

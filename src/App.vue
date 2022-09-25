@@ -10,20 +10,20 @@ import NewsContainer from "./containers/NewsContainer.vue";
 const API_KEY = "a337a1654ced48cc84170717221204";
 const BASE_URL = "https://api.weatherapi.com/v1";
 
-const greetingState = ref();
-const permissionState = ref();
-const coorState = ref();
-const currentWeatherState = ref();
-const lastUpdateState = ref();
+const greeting = ref();
+const permission = ref();
+const coor = ref();
+const currentWeather = ref();
+const lastUpdate = ref();
 
 const setGreetingState = () => {
   const hour = new Date().getHours();
 
   switch (Math.trunc(hour / 6)) {
-    case 0: greetingState.value = 'Sleep'; break;
-    case 1: greetingState.value = 'Morning'; break;
-    case 2: greetingState.value = 'Afternoon'; break;
-    case 3: greetingState.value = 'Evening'; break;
+    case 0: greeting.value = 'Sleep'; break;
+    case 1: greeting.value = 'Morning'; break;
+    case 2: greeting.value = 'Afternoon'; break;
+    case 3: greeting.value = 'Evening'; break;
     default: 'Riddance';
   }
 }
@@ -32,17 +32,17 @@ const fetchCurrentWeatherData = (lat, long) => {
   fetch(`${BASE_URL}/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
     .then((data) => data.json())
     .then((obj) => {
-      currentWeatherState.value = obj;
-      lastUpdateState.value = obj.current.last_updated;
+      currentWeather.value = obj;
+      lastUpdate.value = obj.current.last_updated;
     })
     .catch(console.log);
 }
 
 const getCurrentWeather = () => {
-  currentWeatherState.value = undefined;
+  currentWeather.value = undefined;
   navigator.geolocation.getCurrentPosition(
     (pos) => { 
-      coorState.value = { lat: pos.coords.latitude, long: pos.coords.longitude};
+      coor.value = { lat: pos.coords.latitude, long: pos.coords.longitude};
 
       fetchCurrentWeatherData(pos.coords.latitude, pos.coords.longitude);
     },
@@ -53,16 +53,16 @@ const getCurrentWeather = () => {
 const queryLocationPermission = () => {
   navigator.permissions.query({ name: 'geolocation' }).then((result) => {
     if (result.state === 'denied') {
-      permissionState.value = false;
+      permission.value = false;
       return;
     }
-    permissionState.value = true;
+    permission.value = true;
     getCurrentWeather();
   });
 }
 
 const enableLocationPermission = () => {
-  permissionState.value = true;
+  permission.value = true;
   queryLocationPermission();
 }
 
@@ -75,21 +75,28 @@ onMounted(() => {
 
 <template>
   <header>
-    <h3>Good {{ greetingState }}</h3>
+    <h3>Good {{ greeting }}</h3>
   </header>
-  <div class="main-container" v-if='permissionState && currentWeatherState'>
-    <Current :data="currentWeatherState" />
+  <div class="main-container" v-if='permission && currentWeather'>
+    <Current 
+      :tempCelcius="currentWeather.current.temp_c"
+      :tempFarenheit="currentWeather.current.temp_f"
+      :weatherText="currentWeather.current.condition.text" 
+      :weatherIcon="`http:${currentWeather.current.condition.icon}`"
+      :region="currentWeather.location.region"
+      :country="currentWeather.location.country"
+    />
     <div class="main-right">
       <ForecastContainer 
-        v-if="coorState" 
+        v-if="coor" 
         :BASE_URL="BASE_URL"
         :API_KEY="API_KEY"
-        :coordinate="coorState"
+        :coordinate="coor"
       />
       <NewsContainer />
     </div>
   </div>
-  <AnimationLoader v-else-if="permissionState && !currentWeatherState" />
+  <AnimationLoader v-else-if="permission && !currentWeather" />
   <button v-else id='enable-location-button' @click="enableLocationPermission">
     Please enable location
   </button>
@@ -98,8 +105,8 @@ onMounted(() => {
       <h3>refresh</h3>&nbsp;&nbsp;
       <img id="refresh" alt="refresh" src="./assets/icons8-refresh-64.png" />
     </button>
-    <p id='last-update' v-if="lastUpdateState">
-      last updated: {{ lastUpdateState }}
+    <p id='last-update' v-if="lastUpdate">
+      last updated: {{ lastUpdate }}
     </p>
   </div>
 </template>
@@ -145,14 +152,15 @@ header * {
   grid-template-columns: .3fr 1fr;
   gap: 20px;
   justify-items: center;
-  align-items: center;
 }
 
 .main-right {
-  display: flex;
+  display: grid;
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  grid-template-rows: auto 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
 .sticky-container {
@@ -177,7 +185,6 @@ header * {
   background: none;
   border: 1px solid rgba(255, 255, 255, .5);
   border-radius: 10px;
-  /* width: 1.1rem; */
 }
 
 .sticky-container #refresh-button:hover {

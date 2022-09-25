@@ -1,15 +1,11 @@
 <script setup>/* eslint-disable */
+
   const props = defineProps({
     componentKey: Number, 
     time: String, 
     icon: String, 
     temperature: Number
   });
-
-  // const KEY = props.data.time_epoch;
-  // const TIME = props.data.time.split(' ')[1];
-  // const ICON = props.data.condition.icon;
-  // const TEMPERATURE = Math.trunc(props.data.temp_c);
 
 </script>
   
@@ -20,7 +16,3 @@
     <p class="flex w-full justify-center">{{props.temperature + '°'}}</p>
   </div>
 </template>
-  
-<style>
-
-</style>

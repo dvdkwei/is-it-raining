@@ -3,24 +3,25 @@
 import { ref } from "vue";
 
 const props = defineProps({
-  data: Object,
+  tempCelcius: Number, 
+  tempFarenheit: Number,
+  weatherText: String, 
+  weatherIcon: String, 
+  region: String, 
+  country: String,
 });
 
-const state = ref({
-  tempValue: props.data.current.temp_c,
-  tempDegree: 'c', 
-  weatherText: props.data.current.condition.text, 
-  weatherIcon: 'http:' + props.data.current.condition.icon
-});
+const tempValue = ref(props.tempCelcius);
+const tempDegree = ref('c');
 
 const toggleTemperature = () => {
-  if (state.value.tempDegree === 'c') {
-    state.value.tempValue = props.data.current.temp_f;
-    state.value.tempDegree = 'f';
+  if (tempDegree.value === 'c') {
+    tempValue.value = props.tempFarenheit;
+    tempDegree.value = 'f';
     return;
   }
-  state.value.tempValue = props.data.current.temp_c;
-  state.value.tempDegree = 'c';
+  tempValue.value= props.tempCelcius;
+  tempDegree.value = 'c';
 }
 
 </script>
@@ -29,15 +30,15 @@ const toggleTemperature = () => {
   <div class="current">
     <div class="location-text">
       <img id='location-icon' src="../assets/icons8-location-48.png" alt="location"/>
-      <h3>{{ props.data.location.region + ', ' +props.data.location.country }}</h3>
+      <h3>{{ props.region + ', ' + props.country }}</h3>
     </div>
     <div class="temperature" @click="toggleTemperature">
-      <p class="value">{{ state.tempValue }}</p>
-      <p class="degree">{{ ' °' + state.tempDegree }}</p>
+      <p class="value">{{ tempValue }}</p>
+      <p class="degree">{{ ' °' + tempDegree }}</p>
     </div>
     <div class="weather">
-      <p class="wdesc">{{ state.weatherText }}</p>
-      <img class="wicon" :src=state.weatherIcon alt="icon"/>
+      <p class="wdesc">{{ props.weatherText }}</p>
+      <img class="wicon" :src=props.weatherIcon alt="icon"/>
     </div>
   </div>
 </template>
