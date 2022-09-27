@@ -3,7 +3,7 @@
 import { onMounted, ref, h } from "vue";
 import Forecast from "../components/Forecast.vue";
 
-const props = defineProps({ 
+const props = defineProps({
   BASE_URL: String,
   API_KEY: String,
   coordinate: Object
@@ -26,7 +26,7 @@ const getForecastArray = (arr) => {
     let time = x.time.split(' ')[1];
     return time.match(/[1-2][0-9]|[1-9]/ig) > hour
   });
-  
+
   return today.concat(tomorrow).slice(0, 24);
 }
 
@@ -37,17 +37,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="forecast" 
-    class="forecasts-container flex gap-x-2 px-2 min-w-full h-[150px] items-center rounded-2xl"
-  >
-    <template  v-for="forecastElement in getForecastArray(forecast)">
-      <Forecast 
-        :componentKey="forecastElement.time_epoch"
-        :time="forecastElement.time"
-        :icon="forecastElement.condition.icon"
-        :temperature="Math.trunc(forecastElement.temp_c)"
-      />
+  <div v-if="forecast" class="relative forecasts-container flex gap-x-4 pl-2 min-w-full max-w-full h-[150px] items-center rounded-2xl">
+    <template v-for="forecastElement in getForecastArray(forecast)">
+      <Forecast :componentKey="forecastElement.time_epoch" :time="forecastElement.time"
+        :icon="forecastElement.condition.icon" :temperature="Math.trunc(forecastElement.temp_c)" />
     </template>
+    <div class="sticky flex right-0 px-8 top-0 h-full bg-gradient-to-r from-transparent to-black items-center">
+      <img class="w-2 h-2" alt="slide" src="../assets/chevron-right.png"/>
+    </div>
   </div>
 </template>
 
@@ -56,20 +53,11 @@ onMounted(() => {
   background-color: rgba(27, 27, 27, .9);
   animation: fade-in 1.5s;
   overflow: auto;
-  &:hover{
-    & ::-webkit-scrollbar-track{
-      margin: 0 16px;
-    }
-
-    & ::-webkit-scrollbar-thumb{
-      background: rgb(27, 27, 27);
-      border-radius: 16px;
-    }
-  }
+  scrollbar-width: none;
 }
 
-.forecasts-container::-webkit-scrollbar{
-  background: transparent;
-  height: 10px;
+.forecasts-container::-webkit-scrollbar {
+  height: 0;
+
 }
 </style>

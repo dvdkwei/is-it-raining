@@ -6,9 +6,10 @@ import Current from "./components/CurrentWeather.vue";
 import AnimationLoader from "./components/AnimationLoader.vue";
 import ForecastContainer from "./containers/ForecastContainer.vue";
 import NewsContainer from "./containers/NewsContainer.vue";
+import ActivitiesContainer from "./containers/ActivitiesContainer.vue";
 
-const API_KEY = "a337a1654ced48cc84170717221204";
-const BASE_URL = "https://api.weatherapi.com/v1";
+const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const greeting = ref();
 const permission = ref();
@@ -78,22 +79,25 @@ onMounted(() => {
     <h3>Good {{ greeting }}</h3>
   </header>
   <div class="main-container" v-if='permission && currentWeather'>
-    <Current 
-      :tempCelcius="currentWeather.current.temp_c"
-      :tempFarenheit="currentWeather.current.temp_f"
-      :weatherText="currentWeather.current.condition.text" 
-      :weatherIcon="`http:${currentWeather.current.condition.icon}`"
-      :region="currentWeather.location.region"
-      :country="currentWeather.location.country"
-    />
-    <div class="main-right">
+    <div class="main-left">
+      <Current 
+        :tempCelcius="currentWeather.current.temp_c"
+        :tempFarenheit="currentWeather.current.temp_f"
+        :weatherText="currentWeather.current.condition.text" 
+        :weatherIcon="`http:${currentWeather.current.condition.icon}`"
+        :region="currentWeather.location.region"
+        :country="currentWeather.location.country"
+      />
       <ForecastContainer 
         v-if="coor" 
         :BASE_URL="BASE_URL"
         :API_KEY="API_KEY"
         :coordinate="coor"
       />
+    </div>
+    <div class="main-right">
       <NewsContainer />
+      <ActivitiesContainer />
     </div>
   </div>
   <AnimationLoader v-else-if="permission && !currentWeather" />
@@ -150,16 +154,22 @@ header * {
 
   display: inline-grid;
   grid-template-columns: .3fr 1fr;
-  gap: 20px;
+  gap: 10px;
   justify-items: center;
+}
+
+.main-left{
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 10px;
 }
 
 .main-right {
   display: grid;
+  grid-template-rows: 1fr .8fr;
   width: 100%;
   max-width: 100%;
-  grid-template-rows: auto 1fr;
-  gap: 20px;
+  gap: 10px;
   align-items: start;
 }
 
