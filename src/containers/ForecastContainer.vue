@@ -6,13 +6,13 @@ import Forecast from "../components/Forecast.vue";
 const props = defineProps({
   BASE_URL: String,
   API_KEY: String,
-  coordinate: Object
+  coordinates: Object
 });
 
 const forecast = ref();
 
 const fetchForecasts = () => {
-  fetch(`${props.BASE_URL}/forecast.json?key=${props.API_KEY}&q=${props.coordinate.lat + ',' + props.coordinate.long}&days=2`)
+  fetch(`${props.BASE_URL}/forecast.json?key=${props.API_KEY}&q=${props.coordinates.lat + ',' + props.coordinates.long}&days=2`)
     .then(x => x.json())
     .then(x => forecast.value = x);
 }
@@ -42,8 +42,10 @@ onMounted(() => {
       <Forecast :componentKey="forecastElement.time_epoch" :time="forecastElement.time"
         :icon="forecastElement.condition.icon" :temperature="Math.trunc(forecastElement.temp_c)" />
     </template>
-    <div class="sticky flex right-0 px-8 top-0 h-full bg-gradient-to-r from-transparent to-black items-center">
-      <img class="w-2 h-2" alt="slide" src="../assets/chevron-right.png"/>
+    <div 
+      class="flex sticky right-0 px-8 top-0 h-full bg-gradient-to-r from-transparent to-black items-center"
+    >
+      <img class="arrow ml-6 w-10 h-4" alt="slide" src="../assets/chevron-right.png"/>
     </div>
   </div>
 </template>
@@ -51,13 +53,11 @@ onMounted(() => {
 <style lang="scss">
 .forecasts-container {
   background-color: rgba(27, 27, 27, .9);
-  animation: fade-in 1.5s;
   overflow: auto;
   scrollbar-width: none;
 }
 
 .forecasts-container::-webkit-scrollbar {
   height: 0;
-
 }
 </style>

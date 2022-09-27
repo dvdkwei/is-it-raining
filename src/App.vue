@@ -1,7 +1,7 @@
 <script setup>
 /* eslint-disable */
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUpdated } from "vue";
 import Current from "./components/CurrentWeather.vue";
 import AnimationLoader from "./components/AnimationLoader.vue";
 import ForecastContainer from "./containers/ForecastContainer.vue";
@@ -9,11 +9,11 @@ import NewsContainer from "./containers/NewsContainer.vue";
 import ActivitiesContainer from "./containers/ActivitiesContainer.vue";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_WEATHER_URL;
 
 const greeting = ref();
-const permission = ref();
-const coor = ref();
+const permission = ref(true);
+const coordinates = ref();
 const currentWeather = ref();
 const lastUpdate = ref();
 
@@ -43,40 +43,35 @@ const getCurrentWeather = () => {
   currentWeather.value = undefined;
   navigator.geolocation.getCurrentPosition(
     (pos) => { 
-      coor.value = { lat: pos.coords.latitude, long: pos.coords.longitude};
-
+      permission.value = true;
+      coordinates.value = { lat: pos.coords.latitude, long: pos.coords.longitude};
       fetchCurrentWeatherData(pos.coords.latitude, pos.coords.longitude);
     },
-    () => console.log
+    () => {
+     permission.value = false; 
+    }
   );
 }
 
-const queryLocationPermission = () => {
-  navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-    if (result.state === 'denied') {
-      permission.value = false;
-      return;
-    }
-    permission.value = true;
-    getCurrentWeather();
-  });
-}
-
-const enableLocationPermission = () => {
-  permission.value = true;
-  queryLocationPermission();
+const setPermissionToTrue = () => {
+  // permission.value = true;
+  getCurrentWeather();
 }
 
 onMounted(() => {
-  queryLocationPermission();
   setGreetingState();
+  getCurrentWeather();
+
+  if(!localStorage.getItem('date')){
+    localStorage.setItem('date', Date());
+  }
 });
 
 </script>
 
 <template>
   <header>
-    <h3>Good {{ greeting }}</h3>
+    <h3 id="greeting">Good {{ greeting }}</h3>
   </header>
   <div class="main-container" v-if='permission && currentWeather'>
     <div class="main-left">
@@ -89,10 +84,10 @@ onMounted(() => {
         :country="currentWeather.location.country"
       />
       <ForecastContainer 
-        v-if="coor" 
+        v-if="coordinates" 
         :BASE_URL="BASE_URL"
         :API_KEY="API_KEY"
-        :coordinate="coor"
+        :coordinates="coordinates"
       />
     </div>
     <div class="main-right">
@@ -101,9 +96,9 @@ onMounted(() => {
     </div>
   </div>
   <AnimationLoader v-else-if="permission && !currentWeather" />
-  <button v-else id='enable-location-button' @click="enableLocationPermission">
-    Please enable location
-  </button>
+  <h1 v-else class="text-xl" id='enable-location-button' @click="setPermissionToTrue">
+    Please enable location in your browser settings
+  </h1>
   <div class="sticky-container">
     <button id="refresh-button" @click="getCurrentWeather">
       <h3>refresh</h3>&nbsp;&nbsp;
@@ -171,6 +166,7 @@ header * {
   max-width: 100%;
   gap: 10px;
   align-items: start;
+  animation: fade-in 1.5s;
 }
 
 .sticky-container {
