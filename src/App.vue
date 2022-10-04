@@ -17,7 +17,7 @@ const coordinates = ref();
 const currentWeather = ref();
 const lastUpdate = ref();
 
-const setGreetingState = () => {
+const setGreeting = () => {
   const hour = new Date().getHours();
 
   switch (Math.trunc(hour / 6)) {
@@ -29,7 +29,7 @@ const setGreetingState = () => {
   }
 }
 
-const fetchCurrentWeatherData = (lat, long) => {
+const fetchCurrentWeather = (lat, long) => {
   fetch(`${BASE_URL}/current.json?key=${API_KEY}&q=${lat + "," + long}&aqi=no`)
     .then((data) => data.json())
     .then((obj) => {
@@ -45,7 +45,7 @@ const getCurrentWeather = () => {
     (pos) => { 
       permission.value = true;
       coordinates.value = { lat: pos.coords.latitude, long: pos.coords.longitude};
-      fetchCurrentWeatherData(pos.coords.latitude, pos.coords.longitude);
+      fetchCurrentWeather(pos.coords.latitude, pos.coords.longitude);
     },
     () => {
      permission.value = false; 
@@ -54,12 +54,11 @@ const getCurrentWeather = () => {
 }
 
 const setPermissionToTrue = () => {
-  // permission.value = true;
   getCurrentWeather();
 }
 
 onMounted(() => {
-  setGreetingState();
+  setGreeting();
   getCurrentWeather();
 
   if(!localStorage.getItem('date')){
