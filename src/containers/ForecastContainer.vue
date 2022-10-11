@@ -10,6 +10,7 @@ const props = defineProps({
 });
 
 const forecast = ref();
+const container = ref();
 
 const fetchForecasts = () => {
   fetch(`${props.BASE_URL}/forecast.json?key=${props.API_KEY}&q=${props.coordinates.lat + ',' + props.coordinates.long}&days=2`)
@@ -30,6 +31,10 @@ const getForecastArray = (arr) => {
   return today.concat(tomorrow).slice(0, 24);
 }
 
+const onClickSlider = () => {
+  container.value.scrollLeft += 150;
+}
+
 onMounted(() => {
   fetchForecasts();
 })
@@ -37,7 +42,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="forecast" class="relative forecasts-container flex gap-x-4 pl-2 min-w-full max-w-full h-[150px] items-center rounded-2xl">
+  <div 
+    v-if="forecast"
+    ref="container"
+    class="relative forecasts-container flex gap-x-4 pl-2 min-w-full max-w-full h-[150px] items-center rounded-2xl"
+  >
     <template v-for="forecastElement in getForecastArray(forecast)">
       <Forecast :componentKey="forecastElement.time_epoch" :time="forecastElement.time"
         :icon="forecastElement.condition.icon" :temperature="Math.trunc(forecastElement.temp_c)" />
@@ -45,7 +54,12 @@ onMounted(() => {
     <div 
       class="flex sticky right-0 px-8 top-0 h-full bg-gradient-to-r from-transparent to-black items-center"
     >
-      <img class="arrow ml-6 w-10 h-4" alt="slide" src="../assets/chevron-right.png"/>
+      <img 
+        class="arrow ml-6 w-10 h-4" 
+        alt="slider" 
+        src="../assets/chevron-right.png"
+        @click="onClickSlider"
+      />
     </div>
   </div>
 </template>
@@ -55,9 +69,14 @@ onMounted(() => {
   background-color: rgba(27, 27, 27, .9);
   overflow: auto;
   scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 
 .forecasts-container::-webkit-scrollbar {
   height: 0;
+}
+
+.arrow{
+  cursor: pointer;
 }
 </style>
