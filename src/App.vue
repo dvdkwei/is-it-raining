@@ -6,7 +6,7 @@ import Current from "./components/CurrentWeather.vue";
 import AnimationLoader from "./components/AnimationLoader.vue";
 import ForecastContainer from "./containers/ForecastContainer.vue";
 import NewsContainer from "./containers/NewsContainer.vue";
-import ActivitiesContainer from "./containers/ActivitiesContainer.vue";
+import JIRAIssues from "./containers/JIRAIssues.vue";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_WEATHER_URL;
@@ -16,6 +16,7 @@ const permission = ref(true);
 const coordinates = ref();
 const currentWeather = ref();
 const lastUpdate = ref();
+const username = ref('jan.walenda');
 
 const setGreeting = () => {
   const hour = new Date().getHours();
@@ -90,8 +91,8 @@ onMounted(() => {
       />
     </div>
     <div class="main-right">
+      <JIRAIssues :username="username"/>
       <NewsContainer />
-      <ActivitiesContainer />
     </div>
   </div>
   <AnimationLoader v-else-if="permission && !currentWeather" />
@@ -114,10 +115,11 @@ onMounted(() => {
 
 #app {
   display: grid;
-  grid-template-rows: .3fr 600px .6fr;
+  grid-template-rows: .3fr auto .6fr;
   gap: 20px;
 
   max-width: 100vw;
+  height: 100vh;
 
   place-items: center;
   border-radius: 10px;
@@ -170,7 +172,7 @@ header * {
 
 .sticky-container {
   width: 90%;
-  margin-top: 20px;
+  margin: 20px 0;
   display: grid;
   align-content: center;
   justify-items: center;
